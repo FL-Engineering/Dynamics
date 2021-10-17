@@ -4,13 +4,14 @@ import math
 from scipy.integrate import odeint
 import matplotlib.animation as animation
 
-plt.close('all')
+plt.close('all')  # Closing all open plots
 
 ###############################################################################
 ####                           Pendulum Class                              ####
 
 class Pendulum():
     def __init__(self, gravity, mass, length, theta_initial, thetaDot_initial, timeDuration, dt):
+        # Defining the parameters that are needed for each Pendulum 
         self.g = gravity                                    # [m/s]
         self.m = mass                                       # [kg]
         self.l = length                                     # [m]
@@ -28,7 +29,7 @@ class Pendulum():
         
     def model(self, G, t):
         """Modeling the differential equation of motion"""
-        temp_theta = G[0]
+        temp_theta = G[0]    # temp_theta is just used in this method 
         Q = G[1]             # Q is thetaDot (angular velocity)
         
         QDot = -self.g/self.l*math.sin(temp_theta)   # QDot is thetaDotDot (angular acceleration)
@@ -38,23 +39,26 @@ class Pendulum():
     def solve(self):   
         """Solving the differential equation of motion"""
         
-        z0 = [self.theta_initial, self.thetaDot_initial]
+        z0 = [self.theta_initial, self.thetaDot_initial]  # Setting up the initial conditions
         
-        self.theta[0] = z0[0]
-        self.thetaDot[0] = z0[1]
+        self.theta[0] = z0[0]      # The first value of theta is equal to the initial condition
+        self.thetaDot[0] = z0[1]   # The first value of thetaDot is equal to the initial condition
         
         for ii in range(1,len(self.time)):  
-            tspan = [self.time[ii-1], self.time[ii]]
-            z = odeint(self.model, z0, tspan)
+            tspan = [self.time[ii-1], self.time[ii]]   # Defining the time increment to feed into odeint()
+            z = odeint(self.model, z0, tspan)          # Function to solve the differential equation at each time increment
             
-            self.theta[ii] = z[1][0]
-            self.thetaDot[ii] = z[1][1]            
+            self.theta[ii] = z[1][0]                   # Saving the solved value of theta 
+            self.thetaDot[ii] = z[1][1]                # Saving the solved value of thetaDot
             
             z0 = z[1]   # Need to reset the initial conditions for the next time step
     
     def PlotForces(self): 
         
+        # Calculating the angular acceleartion 
         self.thetaDotDot = -self.g/self.l*np.sin(self.theta)
+        
+        # Calculating the reaction forces
         self.F_r = self.m*self.g*np.cos(self.theta)+self.m*self.l*self.thetaDot**2
         self.F_theta = self.m*self.l*self.thetaDotDot + self.m*self.g*np.sin(self.theta)
         self.F_z = np.zeros_like(self.F_r)
@@ -78,29 +82,26 @@ Pendulum_1 = Pendulum(gravity = 9.81, mass = 2, length = 0.5, theta_initial = ma
                       thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
 Pendulum_1.solve()
 
-# Pendulum_2 = Pendulum(gravity = 9.81, mass = 2, length = 1, theta_initial = math.radians(45),\
-#                       thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
-# Pendulum_2.solve()
+Pendulum_2 = Pendulum(gravity = 9.81, mass = 2, length = 1, theta_initial = math.radians(45),\
+                      thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
+Pendulum_2.solve()
 
-# Pendulum_3 = Pendulum(gravity = 9.81, mass = 2, length = 1.5, theta_initial = math.radians(45),\
-#                       thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
-# Pendulum_3.solve()
+Pendulum_3 = Pendulum(gravity = 9.81, mass = 2, length = 1.5, theta_initial = math.radians(45),\
+                      thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
+Pendulum_3.solve()
 
-# Pendulum_4 = Pendulum(gravity = 9.81, mass = 2, length = 2, theta_initial = math.radians(45),\
-#                       thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
-# Pendulum_4.solve()
+Pendulum_4 = Pendulum(gravity = 9.81, mass = 2, length = 2, theta_initial = math.radians(45),\
+                      thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
+Pendulum_4.solve()
 
-# Pendulum_5 = Pendulum(gravity = 9.81, mass = 2, length = 2.5, theta_initial = math.radians(45),\
-#                       thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
-# Pendulum_5.solve()
+Pendulum_5 = Pendulum(gravity = 9.81, mass = 2, length = 2.5, theta_initial = math.radians(45),\
+                      thetaDot_initial = math.radians(0), timeDuration = duration, dt = dt)
+Pendulum_5.solve()
 
-# Pendulums = [Pendulum_1, Pendulum_2, Pendulum_3, Pendulum_4, Pendulum_5]
-
-
-Pendulums = [Pendulum_1]
+Pendulums = [Pendulum_1, Pendulum_2, Pendulum_3, Pendulum_4, Pendulum_5]
 
 ###############################################################################
-####                                Plotting                               ####
+####                  Angular Position Plot of All Pendulums               ####
 
 plt.figure()
 for ii in range(len(Pendulums)):
@@ -115,6 +116,7 @@ plt.legend()
 ###############################################################################
 ####                              Animation                                ####
 
+# The origin is the same for all the pendulums. It's the hinge point
 Origin_x = Origin_y = Origin_z = np.zeros_like(Pendulums[0].time)
 
 Linewidth = 3
@@ -122,28 +124,33 @@ Linewidth = 3
 fig = plt.figure()
 ax1 = fig.add_subplot(1, 1, 1)
 
-PendulumLengths = [Pendulums[ii].l for ii in range(len(Pendulums))]
+PendulumLengths = [Pendulums[ii].l for ii in range(len(Pendulums))]    # Array of pendulum lengths. Used for sizing the plots
 
 lines = []
 temp = []
 for ii in range(len(Pendulums[0].time)):
-    ax1.cla()
-    ax1.set_aspect('equal')
-    ax1.set(xlim=(-max(PendulumLengths),max(PendulumLengths)),ylim=(-max(PendulumLengths),1))
-    ax1.grid()
+    ax1.cla()                  # Clearing the previous frame
+    ax1.set_aspect('equal')    # Setting plot aspect ratio to be equal. Otherwise plots are all distorted
+    
+    # Setting x and y limits on plots. They're set to be 15% larger than the longest pendulum. This keeps everything in frame 
+    ax1.set(xlim=(-max(PendulumLengths)-0.15*max(PendulumLengths),max(PendulumLengths)+0.15*max(PendulumLengths)),\
+            ylim=(-max(PendulumLengths)-0.15*max(PendulumLengths),max(PendulumLengths)+0.15*max(PendulumLengths)))  
+    ax1.grid()   
     
     for jj in range(len(Pendulums)): 
         
-        PendulumEnd_x = Pendulums[jj].l*np.sin(Pendulums[jj].theta[ii])
-        PendulumEnd_y = -Pendulums[jj].l*np.cos(Pendulums[jj].theta[ii])
+        PendulumEnd_x = Pendulums[jj].l*np.sin(Pendulums[jj].theta[ii])     # x coordinate of endpoint of pendulum
+        PendulumEnd_y = -Pendulums[jj].l*np.cos(Pendulums[jj].theta[ii])    # y coordinate of endpoint of pendulum
         
-        Line, = ax1.plot([Origin_x[ii], PendulumEnd_x], [Origin_y[ii],PendulumEnd_y], linewidth=Linewidth)
-            
-        Point, = ax1.plot(PendulumEnd_x, PendulumEnd_y, color='pink', marker='o', markeredgecolor='r', markersize=5*Pendulums[jj].m)
+        Line, = ax1.plot([Origin_x[ii], PendulumEnd_x], [Origin_y[ii],PendulumEnd_y], linewidth=Linewidth) # Drawing the pendulum line
+          
+        # Drawing the point mass. The size of the point mass scales with the mass
+        PointMass, = ax1.plot(PendulumEnd_x, PendulumEnd_y, color='pink', marker='o', markeredgecolor='r', markersize=5*Pendulums[jj].m)
 
         temp.append(Line)
-        temp.append(Point)
+        temp.append(PointMass)
     
+    # Time label that will be displayed on the plot
     time_text = "Time = " + "{:.2f}".format(Pendulums[0].time[ii]) + "seconds"
     time_label = ax1.text(-0.5,0.5,time_text)
     temp.append(time_label)
