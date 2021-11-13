@@ -6,20 +6,23 @@ import matplotlib.animation as animation
 
 plt.close('all')
 
+# THIS PYTHON SCRIPT CURRENTLY DOES NOT MATCH THE OPENMODELICA MODEL. NOT SURE WHY YET.
+
+
 ###############################################################################
 ####                              Parameters                               ####
 
-l = 1                 # [m]
-g = 9.81              # [m/s2]
+l = 1                 # Link Length [m]
+g = 9.81              # Acceleration due to gravity [m/s2]
 
-A = 0.5               # Amplitude [m]
-freq = 0.25           # [Hz]
+A = 0.5               # Amplitude of collar position [m]
+freq = 1           # Frequency of collar oscillation [Hz]
 
-theta_initial = 0     # [deg]
-thetaDot_initial = 0  # [deg/sec]
+theta_initial = 0     # Initial link angle [deg]
+thetaDot_initial = 0  # Initial link angular velcotiy [deg/sec]
 
-duration = 10         # [sec]
-dt = 0.01             # [sec]
+duration = 10         # Simulation duration [sec]
+dt = 0.01             # Simulation time step [sec]
 
 ###############################################################################
 
@@ -38,20 +41,21 @@ def model(G, t, collar_accel):
 time = np.arange(0,duration,dt)           # [sec]
 theta = np.zeros_like(time)               # [rad]
 thetaDot = np.zeros_like(time)            # [rad/sec]  
+thetaDotDot_check = np.zeros_like(time)
 
-freq = freq*2*math.pi       # [rad/s]
+freq = freq*2*math.pi       # Converting from cycles/s --> [rad/s]
 
-z0 = [math.radians(theta_initial), math.radians(thetaDot_initial)]
+z0 = [math.radians(theta_initial), math.radians(thetaDot_initial)]    # Defining initial condition vector
+
+xDotDot = -A*freq**2*np.sin(freq*time)
 
 theta[0] = z0[0]
 thetaDot[0] = z0[1]
 
-xDotDot = -A*freq**2*np.sin(freq*time)
-
 for ii in range(1,len(time)):  
     tspan = [time[ii-1], time[ii]]
     z = odeint(model, z0, tspan, args=(xDotDot[ii],))
-    
+        
     theta[ii] = z[1][0]
     thetaDot[ii] = z[1][1]            
     
@@ -59,6 +63,8 @@ for ii in range(1,len(time)):
 
 
 x = A*np.sin(freq*time)
+
+thetaDotDot_check = 1/l*(-g*np.sin(theta) - xDotDot*np.cos(theta))
 
 ###############################################################################
 ####                                Plotting                               ####
@@ -79,11 +85,19 @@ plt.xlabel('Time [sec]')
 plt.ylabel('Displacement [m]')
 plt.grid()
 
+
 plt.figure()
 plt.plot(time,xDotDot)
 plt.title('Collar Acceleration')
 plt.xlabel('Time [sec]')
 plt.ylabel('Acceleration [m/s2]')
+plt.grid()
+
+plt.figure()
+plt.plot(time,thetaDotDot_check)
+plt.title('Theta Acceleration')
+plt.xlabel('Time [sec]')
+plt.ylabel('Angular Acceleration [rad/s2]')
 plt.grid()
 
 ###############################################################################
