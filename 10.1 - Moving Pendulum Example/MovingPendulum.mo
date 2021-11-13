@@ -10,7 +10,7 @@ model MovingPendulum
   Modelica.Mechanics.MultiBody.Parts.PointMass pointMass(m = 100)  annotation(
     Placement(visible = true, transformation(origin = {78, 8}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Sine sine(amplitude = 0.5, freqHz = 0.25)  annotation(
-    Placement(visible = true, transformation(origin = {-92, 56}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-142, 12}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Mechanics.Translational.Sources.Position position annotation(
     Placement(visible = true, transformation(origin = {-48, 56}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Mechanics.MultiBody.Visualizers.FixedFrame GroundFrame(color_x = {255, 0, 0})  annotation(
@@ -24,13 +24,19 @@ model MovingPendulum
   Modelica.Mechanics.MultiBody.Parts.FixedRotation fixedRotation1(angle = -90, n = {0, 0, 1}) annotation(
     Placement(visible = true, transformation(origin = {-10, 8}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Clock clock annotation(
-    Placement(visible = true, transformation(origin = {-86, 126}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-234, 102}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Math.Gain gain(k = 0.5)  annotation(
-    Placement(visible = true, transformation(origin = {-16, 112}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-154, 88}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Clock clock1 annotation(
-    Placement(visible = true, transformation(origin = {-86, 96}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-234, 66}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Math.Product product annotation(
-    Placement(visible = true, transformation(origin = {-46, 112}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-194, 88}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Logical.Switch switch1 annotation(
+    Placement(visible = true, transformation(origin = {-82, 56}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.Constant const(k = 0)  annotation(
+    Placement(visible = true, transformation(origin = {-208, 30}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Logical.GreaterThreshold greaterThreshold annotation(
+    Placement(visible = true, transformation(origin = {-144, 56}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   connect(revolute.frame_b, fixedTranslation.frame_a) annotation(
     Line(points = {{30, 8}, {42, 8}}, color = {95, 95, 95}));
@@ -52,16 +58,26 @@ equation
     Line(points = {{0, 8}, {10, 8}, {10, 8}, {10, 8}}));
   connect(fixedTranslation.frame_b, LinkFrame.frame_a) annotation(
     Line(points = {{62, 8}, {66, 8}, {66, 44}, {76, 44}}));
-  connect(clock.y, product.u1) annotation(
-    Line(points = {{-74, 126}, {-66, 126}, {-66, 118}, {-58, 118}, {-58, 118}}, color = {0, 0, 127}));
-  connect(clock1.y, product.u2) annotation(
-    Line(points = {{-74, 96}, {-64, 96}, {-64, 106}, {-58, 106}, {-58, 106}}, color = {0, 0, 127}));
   connect(product.y, gain.u) annotation(
-    Line(points = {{-34, 112}, {-30, 112}, {-30, 112}, {-28, 112}}, color = {0, 0, 127}));
-  connect(gain.y, position.s_ref) annotation(
-    Line(points = {{-4, 112}, {14, 112}, {14, 80}, {-76, 80}, {-76, 56}, {-60, 56}, {-60, 56}}, color = {0, 0, 127}));
+    Line(points = {{-183, 88}, {-166, 88}}, color = {0, 0, 127}));
+  connect(gain.y, switch1.u1) annotation(
+    Line(points = {{-143, 88}, {-106, 88}, {-106, 64}, {-94, 64}}, color = {0, 0, 127}));
+  connect(sine.y, switch1.u3) annotation(
+    Line(points = {{-131, 12}, {-118.5, 12}, {-118.5, 48}, {-94, 48}}, color = {0, 0, 127}));
+  connect(clock1.y, product.u2) annotation(
+    Line(points = {{-223, 66}, {-212, 66}, {-212, 82}, {-206, 82}}, color = {0, 0, 127}));
+  connect(clock.y, product.u1) annotation(
+    Line(points = {{-223, 102}, {-212, 102}, {-212, 94}, {-206, 94}}, color = {0, 0, 127}));
+  connect(switch1.y, position.s_ref) annotation(
+    Line(points = {{-70, 56}, {-60, 56}, {-60, 56}, {-60, 56}}, color = {0, 0, 127}));
+  connect(const.y, greaterThreshold.u) annotation(
+    Line(points = {{-197, 30}, {-166.5, 30}, {-166.5, 56}, {-156, 56}}, color = {0, 0, 127}));
+  connect(greaterThreshold.y, switch1.u2) annotation(
+    Line(points = {{-133, 56}, {-94, 56}}, color = {255, 0, 255}));
   annotation(
-    experiment(StartTime = 0, StopTime = 10));
-    
-  annotation(uses(Modelica(version = "3.2.3"))); 
+    experiment(StartTime = 0, StopTime = 10),
+    uses(Modelica(version = "3.2.3")),
+    Diagram(coordinateSystem(extent = {{-1000, -1000}, {1000, 1000}}), graphics = {Text(origin = {-217, 17}, extent = {{-23, 9}, {43, -29}}, textString = "0 = Sine Input\n1 = Constant Acceleration")}),
+    Icon(coordinateSystem(extent = {{-1000, -1000}, {1000, 1000}})),
+    version = ""); 
 end MovingPendulum;
