@@ -17,8 +17,8 @@ g = 9.81              # Acceleration due to gravity [m/s2]
 theta_initial = 0     # Initial link angle [deg]
 thetaDot_initial = 0  # Initial link angular velcotiy [deg/sec]
 
-A = 0.5     # [m]
-freq = 0.25 # [cycles/sec]
+A = 0.5               # [m]
+freq = 0.25           # [cycles/sec]
 
 duration = 10         # Simulation duration [sec]
 dt = 0.01             # Simulation time step [sec]
@@ -31,7 +31,7 @@ def model(G, t, collar_accel):
     Q = G[1]             # Q is thetaDot (angular velocity)
     
     QDot = 1/l*(-g*math.sin(temp_theta) - collar_accel*math.cos(temp_theta))  # QDot is thetaDotDot (angular acceleration)
-    
+        
     return [Q, QDot]
 
 ###############################################################################
@@ -81,7 +81,6 @@ plt.title('Collar Position')
 plt.xlabel('Time [sec]')
 plt.ylabel('Displacement [m]')
 plt.grid()
-
 
 plt.figure()
 plt.plot(time,xDotDot)
