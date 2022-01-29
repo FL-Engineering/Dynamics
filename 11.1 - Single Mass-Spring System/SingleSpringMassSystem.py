@@ -7,8 +7,8 @@ plt.close('all')
 ###############################################################################
 ####                         Define Parameters                             ####
 
-m = 5                         # Mass [kg]
-k = 50                       # Spring Constant [N/m]
+m = 5                           # Mass [kg]
+k = 50                          # Spring Constant [N/m]
 UnstrechedSpringLength = 0.5    # [m]
 
 duration = 5
