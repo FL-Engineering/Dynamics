@@ -1,13 +1,13 @@
 model SingleMassSpringSystem
-  inner Modelica.Mechanics.MultiBody.World world(gravityType = Modelica.Mechanics.MultiBody.Types.GravityTypes.NoGravity) annotation(
+  inner Modelica.Mechanics.MultiBody.World world(axisColor_x = {255, 0, 0}, gravityType = Modelica.Mechanics.MultiBody.Types.GravityTypes.NoGravity) annotation(
     Placement(visible = true, transformation(origin = {-80, 68}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Mechanics.MultiBody.Parts.PointMass pointMass(m = 5) annotation(
+  Modelica.Mechanics.MultiBody.Parts.PointMass pointMass(m = 5, sphereColor = {255, 165, 0}) annotation(
     Placement(visible = true, transformation(origin = {48, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Mechanics.MultiBody.Forces.Spring spring(c = 50, s_unstretched = 0.5) annotation(
     Placement(visible = true, transformation(origin = {-14, 26}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Mechanics.MultiBody.Parts.Fixed fixed annotation(
     Placement(visible = true, transformation(origin = {-72, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(s(fixed = true, start = 1)) annotation(
+  Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(animation = false, s(fixed = true, start = 1)) annotation(
     Placement(visible = true, transformation(origin = {-14, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   connect(fixed.frame_b, prismatic.frame_a) annotation(
