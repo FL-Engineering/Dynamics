@@ -30,15 +30,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.r2.setText(str(0))
         self.r3.setText(str(0))
         
-        self.I11_OLD.textEdited.connect(self.UpdateOldInertia)
-        self.I22_OLD.textEdited.connect(self.UpdateOldInertia)
-        self.I33_OLD.textEdited.connect(self.UpdateOldInertia)
-        self.I12_OLD.textEdited.connect(self.UpdateOldInertia)
-        self.I13_OLD.textEdited.connect(self.UpdateOldInertia)
-        self.I23_OLD.textEdited.connect(self.UpdateOldInertia)
+        self.I11_OLD.editingFinished.connect(self.UpdateOldInertia)
+        self.I22_OLD.editingFinished.connect(self.UpdateOldInertia)
+        self.I33_OLD.editingFinished.connect(self.UpdateOldInertia)
+        self.I12_OLD.editingFinished.connect(self.UpdateOldInertia)
+        self.I13_OLD.editingFinished.connect(self.UpdateOldInertia)
+        self.I23_OLD.editingFinished.connect(self.UpdateOldInertia)
 
         
     def UpdateOldInertia(self): 
+        
+                
+        if float(self.I11_OLD.text()) < 0 or float(self.I22_OLD.text()) < 0 or float(self.I33_OLD.text()) < 0:
+            self.MessageWindow.setText("Error: You cannot have a negative number for I11, I22, or I33")
+            return
+        else: 
+            self.MessageWindow.setText("")
+
+        
         self.I11_OLD_PA.setText(self.I11_OLD.text())
         self.I22_OLD_PA.setText(self.I22_OLD.text())
         self.I33_OLD_PA.setText(self.I33_OLD.text())
@@ -53,13 +62,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.I13_OLD_Basis.setText(self.I13_OLD.text())
         self.I23_OLD_Basis.setText(self.I23_OLD.text())
 
+
         
         
     def Calculate_PA(self):
-        
-        if float(self.I11_OLD.text()) < 0 or float(self.I22_OLD.text()) < 0 or float(self.I33_OLD.text()) < 0:
-            self.MessageWindow.setText("Error: You cannot have a negative number for I11, I22, or I33")
-            return
         
         if self.Radio_CM_to_P.isChecked():             
             self.I11_NEW_PA.setText(str(float(self.I11_OLD.text()) + float(self.Mass.text())*(float(self.r2.text())**2 + float(self.r3.text())**2)))            
@@ -93,7 +99,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         temp = np.matmul(C,I)
         I_NewBasis = np.matmul(temp,np.linalg.inv(C))
 
-
+        I_NewBasis = np.around(I_NewBasis, 4)   # You can change this number if you need more decimal places
+        
         self.I11_NEW_Basis.setText(str(I_NewBasis[0][0]))
         self.I22_NEW_Basis.setText(str(I_NewBasis[1][1]))
         self.I33_NEW_Basis.setText(str(I_NewBasis[2][2]))

@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import math
 from scipy.integrate import odeint
 import matplotlib.animation as animation
 
@@ -14,7 +13,7 @@ plt.close('all')
 l = 1                 # Link Length [m]
 g = 9.81              # Acceleration due to gravity [m/s2]
 
-theta_initial = 0     # Initial link angle [deg]
+theta_initial = 90     # Initial link angle [deg]
 thetaDot_initial = 0  # Initial link angular velcotiy [deg/sec]
 
 A = 0.5               # [m]
@@ -25,12 +24,12 @@ dt = 0.01             # Simulation time step [sec]
 
 ###############################################################################
 
-def model(G, t, collar_accel):
+def model(G, t, current_time):
     """Modeling the differential equation of motion"""
-    temp_theta = G[0]
+    theta = G[0]
     Q = G[1]             # Q is thetaDot (angular velocity)
-    
-    QDot = 1/l*(-g*math.sin(temp_theta) - collar_accel*math.cos(temp_theta))  # QDot is thetaDotDot (angular acceleration)
+        
+    QDot = 1/l*(-g*np.sin(theta) + A*freq**2*np.sin(freq*current_time)*np.cos(theta))  # QDot is thetaDotDot (angular acceleration)
         
     return [Q, QDot]
 
@@ -39,11 +38,9 @@ def model(G, t, collar_accel):
 time = np.arange(0,duration,dt)           # [sec]
 theta = np.zeros_like(time)               # [rad]
 thetaDot = np.zeros_like(time)            # [rad/sec]  
-thetaDotDot_check = np.zeros_like(time)
+freq = freq*2*np.pi                       # [rad/sec]
 
-freq = freq*2*math.pi
-
-z0 = [math.radians(theta_initial), math.radians(thetaDot_initial)]    # Defining initial condition vector
+z0 = [np.radians(theta_initial), np.radians(thetaDot_initial)]    # Defining initial condition vector
 
 xDotDot = -A*freq**2*np.sin(freq*time)
 
@@ -52,7 +49,7 @@ thetaDot[0] = z0[1]
 
 for ii in range(1,len(time)):  
     tspan = [time[ii-1], time[ii]]
-    z = odeint(model, z0, tspan, args=(xDotDot[ii],))
+    z = odeint(model, z0, tspan, args=(time[ii],))
         
     theta[ii] = z[1][0]
     thetaDot[ii] = z[1][1]            
@@ -66,10 +63,16 @@ thetaDotDot_check = 1/l*(-g*np.sin(theta) - xDotDot*np.cos(theta))
 ###############################################################################
 ####                                Plotting                               ####
 
-theta = theta*180/math.pi
 
 plt.figure()
 plt.plot(time,theta)
+plt.title('Theta')
+plt.xlabel('Time [sec]')
+plt.ylabel('Angle [rad]')
+plt.grid()
+
+plt.figure()
+plt.plot(time,np.degrees(theta))
 plt.title('Theta')
 plt.xlabel('Time [sec]')
 plt.ylabel('Angle [deg]')
@@ -99,7 +102,6 @@ plt.grid()
 ###############################################################################
 ####                              Animation                                ####
 
-theta = theta*math.pi/180
 
 Collar_x = x
 Collar_y = np.zeros_like(x)

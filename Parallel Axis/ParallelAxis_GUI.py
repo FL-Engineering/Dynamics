@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Brian and Marlin Lessons\Dynamics\Parallel Axis Theorem\ParallelAxis.ui'
+# Form implementation generated from reading ui file 'C:\Users\brian\OneDrive\Documents\GitHub\Dynamics\Parallel Axis\ParallelAxis.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -350,7 +350,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.Radio_CM_to_P.pressed.connect(self.Radio_P_to_CM.toggle)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
